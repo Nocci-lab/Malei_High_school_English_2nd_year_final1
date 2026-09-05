@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07395f">
+  <title>Lesson 3 Bicycle 4-Choice Warm-up</title>
+  <style>
+    :root {
+      --navy:#07395f;
+      --blue:#087cad;
+      --sky:#bcecff;
+      --cream:#fffaf0;
+      --yellow:#ffd65a;
+      --green:#16865e;
+      --red:#b83248;
+      --ink:#16344a;
+      --muted:#64798b;
+      --paper:#fff;
+      --line:#d6e3eb;
+      --shadow:0 18px 48px rgba(7,47,79,.17);
+    }
+
+    *{box-sizing:border-box}
+    html{min-height:100%}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 14% 8%,rgba(255,255,255,.85) 0 4%,transparent 4.5%),
+        radial-gradient(circle at 80% 14%,rgba(255,255,255,.65) 0 6%,transparent 6.5%),
+        linear-gradient(180deg,#bcecff 0 45%,#dcefc6 45% 100%);
+      overflow-x:hidden;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:47% 0 auto;
+      height:9px;
+      background:repeating-linear-gradient(90deg,transparent 0 40px,rgba(255,255,255,.9) 40px 72px);
+      pointer-events:none;
+      opacity:.8;
+    }
+
+    button,a{font:inherit;touch-action:manipulation}
+    button{cursor:pointer}
+
+    .app{
+      width:min(940px,calc(100% - 28px));
+      margin:0 auto;
+      padding:22px 0 40px;
+      position:relative;
+      z-index:1;
+    }
+
+    header{
+      padding:20px clamp(18px,5vw,40px);
+      border-radius:25px 25px 13px 13px;
+      color:white;
+      background:linear-gradient(135deg,var(--navy),var(--blue));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    header::after{
+      content:"🚲";
+      position:absolute;
+      right:22px;
+      top:0;
+      font-size:clamp(48px,8vw,78px);
+      opacity:.18;
+      transform:rotate(-5deg);
+    }
+
+    .eyebrow{
+      margin:0 0 4px;
+      color:var(--yellow);
+      font-size:.8rem;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    h1{margin:0;font-size:clamp(1.4rem,4vw,2.25rem);line-height:1.25}
+    .subtitle{margin:6px 0 0;color:#dcf5ff;font-weight:750;font-size:clamp(.86rem,2.5vw,1rem)}
+
+    .stage-road{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:8px;
+      padding:17px 4px 13px;
+    }
+
+    .stage-pill{
+      min-width:0;
+      padding:8px 3px;
+      border:2px solid rgba(7,57,95,.15);
+      border-radius:999px;
+      color:var(--muted);
+      background:rgba(255,255,255,.78);
+      text-align:center;
+      font-size:clamp(.68rem,2vw,.84rem);
+      font-weight:900;
+    }
+
+    .stage-pill.active{color:#fff;background:var(--blue);border-color:#fff;box-shadow:0 4px 14px rgba(8,124,173,.28)}
+    .stage-pill.done{color:#0b533c;background:#baf0d8;border-color:#69cda4}
+
+    .game-card{
+      min-height:570px;
+      padding:clamp(18px,4.5vw,38px);
+      border:1px solid rgba(7,57,95,.1);
+      border-radius:22px;
+      background:rgba(255,255,255,.97);
+      box-shadow:var(--shadow);
+    }
+
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+    .stage-name{margin:0 0 2px;color:var(--blue);font-size:1rem;font-weight:900}
+    .counter{margin:0;color:var(--muted);font-size:.85rem;font-weight:750}
+
+    .timer{
+      min-width:112px;
+      padding:9px 13px;
+      border:2px solid #c9e1ed;
+      border-radius:14px;
+      color:var(--navy);
+      background:#eef9fd;
+      text-align:center;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:1.35rem;
+      font-weight:950;
+      font-variant-numeric:tabular-nums;
+      transition:.2s;
+    }
+
+    .timer.urgent{color:#7a2430;background:#fff0f2;border-color:#f0a7b2;animation:pulse .75s infinite alternate}
+    @keyframes pulse{to{transform:scale(1.045)}}
+
+    .timer-track{height:9px;margin-bottom:24px;border-radius:999px;background:#e7eff3;overflow:hidden}
+    .timer-bar{height:100%;width:100%;background:linear-gradient(90deg,#24a879,#6ed488);transform-origin:left;transition:width .25s linear,background .2s}
+    .timer-bar.urgent{background:linear-gradient(90deg,#d5495d,#f0a34a)}
+
+    .direction{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      margin-bottom:12px;
+      padding:6px 11px;
+      border-radius:999px;
+      color:#31556e;
+      background:#eaf7fc;
+      font-size:.78rem;
+      font-weight:900;
+    }
+
+    .prompt{
+      min-height:92px;
+      margin:0 0 24px;
+      display:grid;
+      place-items:center;
+      padding:13px;
+      border-radius:17px;
+      color:var(--navy);
+      background:var(--cream);
+      border:2px dashed #e4bd48;
+      text-align:center;
+      font-size:clamp(1.3rem,4vw,2rem);
+      font-weight:950;
+      line-height:1.45;
+    }
+
+    .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .choice{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:12px;
+      padding:13px 15px;
+      border:3px solid var(--line);
+      border-radius:15px;
+      color:var(--ink);
+      background:#fbfdff;
+      text-align:left;
+      font-size:clamp(.95rem,2.6vw,1.15rem);
+      font-weight:850;
+      line-height:1.35;
+      transition:transform .12s,border-color .18s,background .18s;
+    }
+
+    .choice:hover:not(:disabled){transform:translateY(-2px);border-color:#7fc7e7;background:#f2fbff}
+    .choice:disabled{cursor:default}
+    .choice-key{
+      flex:0 0 31px;
+      width:31px;
+      height:31px;
+      display:grid;
+      place-items:center;
+      border-radius:9px;
+      color:var(--blue);
+      background:#e4f5fc;
+      font-size:.83rem;
+      font-weight:950;
+    }
+
+    .choice.correct{color:#105b40;background:#e7faef;border-color:#27a575}
+    .choice.correct .choice-key{color:white;background:var(--green)}
+    .choice.wrong{color:#7a2430;background:#fff0f2;border-color:#d74c61}
+    .choice.wrong .choice-key{color:white;background:var(--red)}
+
+    .feedback{
+      min-height:48px;
+      margin:15px 0 0;
+      color:var(--muted);
+      text-align:center;
+      font-size:.98rem;
+      font-weight:850;
+      line-height:1.5;
+    }
+    .feedback.good{color:#126342}.feedback.try{color:#8b2635}
+
+    .master-track{height:12px;margin-top:13px;border-radius:999px;background:#e7eff3;overflow:hidden}
+    .master-bar{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--blue),#55c3d8);transition:width .35s}
+    .tip{margin:10px 0 0;color:var(--muted);text-align:center;font-size:.78rem;line-height:1.5}
+
+    .footer-tools{display:flex;justify-content:center;margin-top:17px}
+    .reset-btn{
+      padding:9px 14px;
+      border:1px solid rgba(7,57,95,.2);
+      border-radius:13px;
+      color:var(--navy);
+      background:rgba(255,255,255,.75);
+      font-weight:850;
+    }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      z-index:50;
+      display:none;
+      place-items:center;
+      padding:18px;
+      background:rgba(4,31,52,.74);
+      backdrop-filter:blur(6px);
+    }
+    .overlay.show{display:grid}
+
+    .modal{
+      width:min(560px,100%);
+      padding:clamp(26px,6vw,43px);
+      border-radius:26px;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(0,0,0,.3);
+      text-align:center;
+      position:relative;
+      z-index:2;
+      animation:pop .4s cubic-bezier(.18,.89,.32,1.28);
+    }
+    @keyframes pop{from{opacity:0;transform:scale(.78) translateY(22px)}to{opacity:1;transform:none}}
+    .modal-icon{font-size:52px}
+    .modal h2{margin:5px 0 10px;color:var(--navy);font-size:clamp(1.8rem,6vw,2.7rem)}
+    .modal p{margin:0 auto 21px;max-width:430px;font-weight:750;line-height:1.7}
+    .primary-btn,.spelling-link{
+      min-width:220px;
+      display:inline-block;
+      padding:14px 21px;
+      border:0;
+      border-radius:14px;
+      color:#fff;
+      background:var(--blue);
+      box-shadow:0 6px 0 #07577b;
+      text-decoration:none;
+      text-align:center;
+      font-weight:950;
+    }
+    .primary-btn:hover,.spelling-link:hover{filter:brightness(1.08)}
+    .primary-btn:active,.spelling-link:active{transform:translateY(4px);box-shadow:0 2px 0 #07577b}
+
+    #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+
+    .finish-screen{
+      display:none;
+      padding:clamp(20px,4vw,36px);
+      border-radius:22px;
+      background:rgba(255,255,255,.98);
+      box-shadow:var(--shadow);
+      text-align:center;
+      overflow:hidden;
+    }
+    .finish-screen.show{display:block}
+    .game-card.hidden{display:none}
+    .finish-title{margin:0;color:var(--navy);font-size:clamp(1.7rem,5vw,2.7rem)}
+    .finish-sub{margin:7px 0 14px;color:var(--muted);font-weight:800}
+
+    .speech{
+      width:min(600px,96%);
+      margin:12px auto 4px;
+      padding:15px 20px;
+      border:4px solid var(--navy);
+      border-radius:22px;
+      color:var(--navy);
+      background:#fffdf3;
+      font-size:clamp(1.3rem,4vw,2rem);
+      font-weight:950;
+      position:relative;
+      animation:pop .55s .25s both;
+    }
+    .speech::after{
+      content:"";
+      position:absolute;
+      left:52%;bottom:-18px;
+      width:27px;height:27px;
+      border-right:4px solid var(--navy);
+      border-bottom:4px solid var(--navy);
+      background:#fffdf3;
+      transform:rotate(45deg);
+    }
+
+    .riders{
+      width:min(750px,100%);
+      margin:8px auto 0;
+      animation:rideIn 1.2s cubic-bezier(.18,.75,.2,1) both;
+    }
+    @keyframes rideIn{from{transform:translateX(110vw)}to{transform:none}}
+    .wheel{transform-box:fill-box;transform-origin:center;animation:spin 1.2s linear 1}
+    @keyframes spin{to{transform:rotate(-720deg)}}
+    .wave-arm{transform-box:fill-box;transform-origin:20% 90%;animation:wave .65s ease-in-out infinite alternate}
+    @keyframes wave{from{transform:rotate(-12deg)}to{transform:rotate(25deg)}}
+
+    .finish-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px}
+    .spelling-link{background:var(--green);box-shadow:0 6px 0 #0d6143}
+    .again-btn{background:var(--blue)}
+
+    .review-note{
+      width:min(650px,100%);
+      margin:18px auto 0;
+      padding:12px 15px;
+      border:1px solid #cee0e9;
+      border-radius:13px;
+      color:#486175;
+      background:#f7fbfd;
+      font-size:.87rem;
+      font-weight:750;
+      line-height:1.55;
+    }
+
+    @media(max-width:620px){
+      .app{width:min(calc(100% - 18px),940px);padding-top:10px}
+      header{border-radius:20px 20px 12px 12px}
+      .stage-road{gap:4px}
+      .stage-pill{padding:7px 1px}
+      .game-card{min-height:590px}
+      .choices{grid-template-columns:1fr;gap:9px}
+      .choice{min-height:60px}
+      .prompt{min-height:80px;margin-bottom:16px}
+      .timer{min-width:100px;font-size:1.2rem}
+      .finish-actions>*{width:100%}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <p class="eyebrow">Lesson 3 · 4-Choice Warm-up</p>
+      <h1>Bicycle Vocabulary Speed Challenge</h1>
+      <p class="subtitle">意味と英単語をすばやく結びつけよう！ 各ステージ2分30秒</p>
+    </header>
+
+    <nav class="stage-road" id="stageRoad" aria-label="ステージ進行状況"></nav>
+
+    <section class="game-card" id="gameCard">
+      <div class="topline">
+        <div>
+          <p class="stage-name" id="stageName">Stage 1</p>
+          <p class="counter" id="counter">マスター 0 / 15</p>
+        </div>
+        <div class="timer" id="timer" aria-label="残り時間">2:30</div>
+      </div>
+      <div class="timer-track" aria-hidden="true"><div class="timer-bar" id="timerBar"></div></div>
+
+      <div class="direction" id="direction">日本語 → 英語</div>
+      <p class="prompt" id="prompt">スタートボタンを押してください</p>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite">4つの中から答えを選ぼう！</div>
+      <div class="master-track" aria-hidden="true"><div class="master-bar" id="masterBar"></div></div>
+      <p class="tip">選んだ瞬間に答え合わせ。間違えた単語は、正解するまで再登場します。</p>
+    </section>
+
+    <section class="finish-screen" id="finishScreen">
+      <h2 class="finish-title">全ステージクリア！ 🎉</h2>
+      <p class="finish-sub">72語をすべて結びつけられました！</p>
+      <div class="speech">スペリングゲームで待ってるよ！</div>
+      <div class="riders" aria-label="自転車に乗って笑顔で手を振る人たち">
+        <svg viewBox="0 0 900 360" role="img" aria-labelledby="riderTitle">
+          <title id="riderTitle">二人のサイクリストが笑顔で手を振っている</title>
+          <defs>
+            <linearGradient id="roadGrad" x1="0" x2="1"><stop stop-color="#dbe8ee"/><stop offset="1" stop-color="#eef4f6"/></linearGradient>
+            <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-opacity=".2"/></filter>
+          </defs>
+          <ellipse cx="450" cy="321" rx="405" ry="22" fill="url(#roadGrad)"/>
+
+          <g filter="url(#shadow)" transform="translate(20 0)">
+            <g class="wheel"><circle cx="165" cy="258" r="72" fill="#fff" stroke="#17384d" stroke-width="11"/><path d="M165 190v136M97 258h136M117 210l96 96M213 210l-96 96" stroke="#9bb0bc" stroke-width="2"/><circle cx="165" cy="258" r="8" fill="#17384d"/></g>
+            <g class="wheel"><circle cx="430" cy="258" r="72" fill="#fff" stroke="#17384d" stroke-width="11"/><path d="M430 190v136M362 258h136M382 210l96 96M478 210l-96 96" stroke="#9bb0bc" stroke-width="2"/><circle cx="430" cy="258" r="8" fill="#17384d"/></g>
+            <g fill="none" stroke="#087cad" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"><path d="M165 258l83-98 57 98H165l99-9 61-89M305 258h125l-44-111"/></g>
+            <path d="M371 145h45M235 153h55" stroke="#17384d" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="305" cy="258" r="22" fill="#fff" stroke="#17384d" stroke-width="6"/>
+
+            <path d="M271 158l25-59 40 15 4 61" fill="#ffd65a" stroke="#17384d" stroke-width="7" stroke-linejoin="round"/>
+            <circle cx="311" cy="70" r="31" fill="#f0b68d" stroke="#17384d" stroke-width="6"/>
+            <path d="M281 66q12-39 51-23l10 19q-33-10-61 4" fill="#244f70"/>
+            <circle cx="302" cy="70" r="3.5" fill="#17384d"/><circle cx="322" cy="70" r="3.5" fill="#17384d"/>
+            <path d="M300 82q12 12 25 0" fill="none" stroke="#8c3c3c" stroke-width="4" stroke-linecap="round"/>
+            <path d="M278 111l-30 42 24 46M332 118l36 35" fill="none" stroke="#f0b68d" stroke-width="13" stroke-linecap="round"/>
+            <path class="wave-arm" d="M368 153l23-45 2-45" fill="none" stroke="#f0b68d" stroke-width="13" stroke-linecap="round"/>
+            <path d="M276 178l-28 64M334 173l-29 75" fill="none" stroke="#17384d" stroke-width="14" stroke-linecap="round"/>
+          </g>
+
+          <g filter="url(#shadow)" transform="translate(430 12) scale(.9)">
+            <g class="wheel"><circle cx="165" cy="258" r="72" fill="#fff" stroke="#17384d" stroke-width="11"/><path d="M165 190v136M97 258h136M117 210l96 96M213 210l-96 96" stroke="#9bb0bc" stroke-width="2"/><circle cx="165" cy="258" r="8" fill="#17384d"/></g>
+            <g class="wheel"><circle cx="430" cy="258" r="72" fill="#fff" stroke="#17384d" stroke-width="11"/><path d="M430 190v136M362 258h136M382 210l96 96M478 210l-96 96" stroke="#9bb0bc" stroke-width="2"/><circle cx="430" cy="258" r="8" fill="#17384d"/></g>
+            <g fill="none" stroke="#e55971" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"><path d="M165 258l83-98 57 98H165l99-9 61-89M305 258h125l-44-111"/></g>
+            <path d="M371 145h45M235 153h55" stroke="#17384d" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="305" cy="258" r="22" fill="#fff" stroke="#17384d" stroke-width="6"/>
+
+            <path d="M271 158l25-59 40 15 4 61" fill="#39b987" stroke="#17384d" stroke-width="7" stroke-linejoin="round"/>
+            <circle cx="311" cy="70" r="31" fill="#bd7d57" stroke="#17384d" stroke-width="6"/>
+            <path d="M279 66q7-36 42-30 21 4 23 29-33-14-65 1" fill="#37291f"/>
+            <circle cx="302" cy="71" r="3.5" fill="#17384d"/><circle cx="322" cy="71" r="3.5" fill="#17384d"/>
+            <path d="M300 83q12 12 25 0" fill="none" stroke="#7d2f35" stroke-width="4" stroke-linecap="round"/>
+            <path d="M278 111l-30 42 24 46M332 118l36 35" fill="none" stroke="#bd7d57" stroke-width="13" stroke-linecap="round"/>
+            <path class="wave-arm" d="M368 153l26-42 18-39" fill="none" stroke="#bd7d57" stroke-width="13" stroke-linecap="round"/>
+            <path d="M276 178l-28 64M334 173l-29 75" fill="none" stroke="#17384d" stroke-width="14" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="finish-actions">
+        <a class="spelling-link" href="Lesson_3_Bicycle_Spelling_Game.html">スペリングゲームへ進む ✏️</a>
+        <button class="primary-btn again-btn" id="playAgainBtn" type="button">4択をもう一度</button>
+      </div>
+      <div class="review-note" id="reviewNote"></div>
+    </section>
+
+    <div class="footer-tools"><button class="reset-btn" id="resetBtn" type="button">Stage 1からやり直す</button></div>
+  </main>
+
+  <div class="overlay show" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <canvas id="confetti"></canvas>
+    <div class="modal">
+      <div class="modal-icon" id="modalIcon">⏱️</div>
+      <h2 id="modalTitle">Stage 1</h2>
+      <p id="modalMessage">制限時間は2分30秒。日本語と英語をすばやく結びつけよう！</p>
+      <button class="primary-btn" id="modalButton" type="button">スタート！</button>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    const STAGE_TIME_MS = 150000;
+    const STORAGE_KEY = "lesson3-bicycle-4choice-v1";
+
+    const stages = [
+      {name:"Stage 1　街へ出発",words:[
+        ["Copenhagen","コペンハーゲン"],["occasionally","時々、たまに"],["comparatively","比較的に"],["eco-friendly","環境に優しい"],["emit","排出する、放出する"],["greenhouse","温室（の）"],["diabetes","糖尿病"],["Denmark","デンマーク"],["implement","実施する、実行する"],["cyclist","自転車に乗る人、自転車利用者"],["rush","殺到、混雑；急ぐ"],["simultaneously","同時に"],["congestion","混雑、渋滞"],["fairly","かなり、相当に"],["sacrifice","犠牲にする"]
+      ]},
+      {name:"Stage 2　自転車の道",words:[
+        ["efficiency","効率、能率"],["span","（橋などが）～に架かる"],["shortcut","近道"],["waterfront","海岸・川岸の地域、水辺"],["gently","穏やかに、緩やかに"],["curve","曲がる、カーブする"],["cruise","ゆったり進む"],["safely","安全に"],["superhighway","高速道路"],["suburban","郊外の"],["resident","住民"],["commute","通勤・通学する"],["absolute","完全な、この上ない"],["peacefulness","平穏、静けさ"],["approvingly","満足そうに、賛成して"]
+      ]},
+      {name:"Stage 3　街を変えよう",words:[
+        ["transform","変える、変形させる"],["paradise","楽園"],["motorist","自動車運転者"],["surprisingly","驚くことに"],["planner","計画立案者、都市計画者"],["crisis","危機"],["revise","見直す、改訂する"],["install","設置する、導入する"],["infrastructure","インフラ、基盤設備"],["downtown","中心街へ／中心街の"],["attractive","魅力的な"],["adopt","採用する"],["Copenhagenization","コペンハーゲン化"],["consequently","その結果、したがって"]
+      ]},
+      {name:"Stage 4　熟語と自転車",words:[
+        ["Copenhagenize","コペンハーゲン化する"],["sustainable","持続可能な"],["livable","住みやすい"],["out of shape","運動不足で、体調がよくなくて"],["to begin with","まず初めに、第一に"],["as long as","～する限り、～でありさえすれば"],["no wonder","～なのも不思議ではない、～なのも当然だ"],["destination","目的地"],["compact","小型の、コンパクトな"],["inch","インチ"],["freight","貨物"],["transport","輸送する、運ぶ"],["load","荷物、積み荷"],["gravity","重力"]
+      ]},
+      {name:"Stage 5　ゴールへ！",words:[
+        ["maximum","最大の、最大限"],["navy","濃紺、ネイビー"],["boost","押し上げるもの、増強"],["khaki","カーキ色"],["tandem","二人乗りの、タンデム"],["output","出力"],["consultation","相談"],["height","高さ、身長"],["length","長さ"],["dealer","販売店、取扱店"],["warranty","保証、保証書"],["discount","割引"],["frame","フレーム、車体"],["valid","有効な"]
+      ]}
+    ].map((stage,si)=>({...stage,words:stage.words.map((w,wi)=>({answer:w[0],meaning:w[1],id:`${si}-${wi}`}))}));
+
+    const els={
+      stageRoad:document.getElementById("stageRoad"),stageName:document.getElementById("stageName"),counter:document.getElementById("counter"),
+      timer:document.getElementById("timer"),timerBar:document.getElementById("timerBar"),direction:document.getElementById("direction"),
+      prompt:document.getElementById("prompt"),choices:document.getElementById("choices"),feedback:document.getElementById("feedback"),
+      masterBar:document.getElementById("masterBar"),overlay:document.getElementById("overlay"),modalIcon:document.getElementById("modalIcon"),
+      modalTitle:document.getElementById("modalTitle"),modalMessage:document.getElementById("modalMessage"),modalButton:document.getElementById("modalButton"),
+      confetti:document.getElementById("confetti"),gameCard:document.getElementById("gameCard"),finishScreen:document.getElementById("finishScreen"),
+      reviewNote:document.getElementById("reviewNote"),playAgain:document.getElementById("playAgainBtn"),reset:document.getElementById("resetBtn")
+    };
+
+    let stageIndex=0,queue=[],current=null,options=[],mastered=new Set(),mistakes={},questionNumber=0;
+    let direction="ja-en",gameActive=false,answerLocked=false,deadline=0,timerInterval=null,nextTimeout=null,modalAction="start";
+    let confettiAnimation=null;
+
+    function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+    function esc(v){return v.replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c])}
+
+    function loadProgress(){
+      try{
+        const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+        if(!saved)return;
+        mistakes=saved.mistakes||{};
+        if(saved.finished){stageIndex=stages.length;showFinish(false);return}
+        if(Number.isInteger(saved.stageIndex)&&saved.stageIndex>=0&&saved.stageIndex<stages.length)stageIndex=saved.stageIndex;
+      }catch(_){localStorage.removeItem(STORAGE_KEY)}
+    }
+
+    function saveProgress(finished=false){localStorage.setItem(STORAGE_KEY,JSON.stringify({stageIndex:Math.min(stageIndex,stages.length-1),mistakes,finished}))}
+
+    function renderRoad(){
+      els.stageRoad.innerHTML=stages.map((_,i)=>{const cls=i<stageIndex?"done":i===stageIndex?"active":"";return `<div class="stage-pill ${cls}">Stage ${i<stageIndex?"✓":i+1}</div>`}).join("");
+    }
+
+    function showStartModal(){
+      renderRoad();
+      els.modalIcon.textContent="⏱️";
+      els.modalTitle.textContent=`Stage ${stageIndex+1}`;
+      els.modalMessage.textContent=`${stages[stageIndex].words.length}語を2分30秒以内にマスターしよう。準備ができたらスタート！`;
+      els.modalButton.textContent="スタート！";
+      modalAction="start";
+      els.overlay.classList.add("show");
+      els.modalButton.focus();
+    }
+
+    function startStage(){
+      stopConfetti();clearTimeout(nextTimeout);clearInterval(timerInterval);
+      els.overlay.classList.remove("show");
+      mastered=new Set();queue=shuffle(stages[stageIndex].words);questionNumber=0;
+      gameActive=true;answerLocked=false;deadline=Date.now()+STAGE_TIME_MS;
+      updateTimer();timerInterval=setInterval(updateTimer,250);renderRoad();nextQuestion();
+    }
+
+    function nextQuestion(){
+      if(!gameActive)return;
+      answerLocked=false;current=queue.shift();questionNumber++;
+      direction=Math.random()<.5?"ja-en":"en-ja";
+      const pool=stages[stageIndex].words.filter(w=>w.id!==current.id);
+      options=shuffle([current,...shuffle(pool).slice(0,3)]);
+      els.stageName.textContent=stages[stageIndex].name;
+      els.counter.textContent=`マスター ${mastered.size} / ${stages[stageIndex].words.length}　出題 ${questionNumber}`;
+      els.direction.textContent=direction==="ja-en"?"日本語 → 英語":"英語 → 日本語";
+      els.prompt.textContent=direction==="ja-en"?current.meaning:current.answer;
+      els.feedback.className="feedback";els.feedback.textContent="4つの中から答えを選ぼう！";
+      els.choices.innerHTML=options.map((word,i)=>`<button class="choice" type="button" data-id="${word.id}"><span class="choice-key">${i+1}</span><span>${esc(direction==="ja-en"?word.answer:word.meaning)}</span></button>`).join("");
+      els.masterBar.style.width=`${mastered.size/stages[stageIndex].words.length*100}%`;
+      els.choices.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>choose(btn)));
+      const first=els.choices.querySelector(".choice");if(first)first.focus();
+    }
+
+    function choose(selected){
+      if(!gameActive||answerLocked)return;
+      answerLocked=true;
+      const selectedId=selected.dataset.id,isCorrect=selectedId===current.id;
+      els.choices.querySelectorAll(".choice").forEach(btn=>{
+        btn.disabled=true;
+        if(btn.dataset.id===current.id){btn.classList.add("correct");btn.querySelector(".choice-key").textContent="✓"}
+      });
+      if(isCorrect){
+        mastered.add(current.id);
+        els.feedback.className="feedback good";
+        els.feedback.textContent=`正解！ ${current.answer} ＝ ${current.meaning}`;
+      }else{
+        selected.classList.add("wrong");selected.querySelector(".choice-key").textContent="✕";
+        mistakes[current.id]=(mistakes[current.id]||0)+1;queue.push(current);saveProgress();
+        els.feedback.className="feedback try";
+        els.feedback.textContent=`おしい！ ${current.answer} ＝ ${current.meaning}　あとでもう一度！`;
+      }
+      els.counter.textContent=`マスター ${mastered.size} / ${stages[stageIndex].words.length}　出題 ${questionNumber}`;
+      els.masterBar.style.width=`${mastered.size/stages[stageIndex].words.length*100}%`;
+      nextTimeout=setTimeout(()=>{
+        if(!gameActive)return;
+        if(mastered.size===stages[stageIndex].words.length)completeStage();else nextQuestion();
+      },isCorrect?600:1150);
+    }
+
+    function updateTimer(){
+      if(!gameActive)return;
+      const left=Math.max(0,deadline-Date.now()),seconds=Math.ceil(left/1000),min=Math.floor(seconds/60),sec=seconds%60;
+      els.timer.textContent=`${min}:${String(sec).padStart(2,"0")}`;
+      els.timerBar.style.width=`${left/STAGE_TIME_MS*100}%`;
+      const urgent=left<=30000;els.timer.classList.toggle("urgent",urgent);els.timerBar.classList.toggle("urgent",urgent);
+      if(left<=0)timeUp();
+    }
+
+    function stopGame(){gameActive=false;answerLocked=true;clearInterval(timerInterval);clearTimeout(nextTimeout);timerInterval=null;nextTimeout=null}
+
+    function timeUp(){
+      stopGame();
+      els.choices.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+      els.modalIcon.textContent="⌛";els.modalTitle.textContent="タイムアップ！";
+      els.modalMessage.textContent=`${mastered.size} / ${stages[stageIndex].words.length}語までマスターできました。ひと休みして、同じステージにもう一度挑戦しよう！`;
+      els.modalButton.textContent="もう一度スタート";modalAction="retry";els.overlay.classList.add("show");els.modalButton.focus();
+    }
+
+    function completeStage(){
+      const elapsed=STAGE_TIME_MS-Math.max(0,deadline-Date.now());stopGame();
+      const sec=Math.round(elapsed/1000),time=`${Math.floor(sec/60)}分${String(sec%60).padStart(2,"0")}秒`;
+      const last=stageIndex===stages.length-1;
+      els.modalIcon.textContent="🎉";els.modalTitle.textContent="やったね！";
+      els.modalMessage.textContent=`${stages[stageIndex].words.length}語を${time}で全問クリア！ ${last?"自転車のみんなに会いに行こう！":"次のステージもこの調子！"}`;
+      els.modalButton.textContent=last?"ゴールへ！ 🚲":"次のステージへ";modalAction=last?"finish":"next";
+      els.overlay.classList.add("show");runConfetti();saveProgress(false);els.modalButton.focus();
+    }
+
+    function handleModal(){
+      if(modalAction==="start"||modalAction==="retry"){startStage();return}
+      if(modalAction==="next"){
+        stopConfetti();stageIndex++;saveProgress(false);renderIdleCard();showStartModal();return;
+      }
+      if(modalAction==="finish"){
+        stopConfetti();stageIndex=stages.length;saveProgress(true);els.overlay.classList.remove("show");showFinish(true);
+      }
+    }
+
+    function renderIdleCard(){
+      const stage=stages[stageIndex];
+      els.stageName.textContent=stage.name;els.counter.textContent=`マスター 0 / ${stage.words.length}`;
+      els.timer.textContent="2:30";els.timer.classList.remove("urgent");els.timerBar.classList.remove("urgent");els.timerBar.style.width="100%";
+      els.direction.textContent="ランダム出題";els.prompt.textContent="スタートボタンを押してください";els.choices.innerHTML="";
+      els.feedback.className="feedback";els.feedback.textContent="日本語→英語／英語→日本語がランダムで出ます。";els.masterBar.style.width="0";
+    }
+
+    function showFinish(celebrate=true){
+      stopGame();els.overlay.classList.remove("show");els.gameCard.classList.add("hidden");els.finishScreen.classList.add("show");renderRoad();
+      [...els.stageRoad.children].forEach(el=>{el.className="stage-pill done";el.textContent="Stage ✓"});
+      const all=stages.flatMap(s=>s.words),review=all.filter(w=>mistakes[w.id]>0).sort((a,b)=>(mistakes[b.id]||0)-(mistakes[a.id]||0));
+      els.reviewNote.textContent=review.length?`4択で要チェックだった語：${review.slice(0,8).map(w=>`${w.answer}（${mistakes[w.id]}回）`).join("、")}${review.length>8?` ほか${review.length-8}語`:""}`:"4択は全問一発正解！ そのままスペリングゲームへ進もう！";
+      if(celebrate)runConfetti(4800);
+    }
+
+    function resetGame(){
+      if(!confirm("記録を消して、Stage 1からやり直しますか？"))return;
+      localStorage.removeItem(STORAGE_KEY);stopGame();stopConfetti();stageIndex=0;mistakes={};
+      els.finishScreen.classList.remove("show");els.gameCard.classList.remove("hidden");renderIdleCard();showStartModal();
+    }
+
+    function runConfetti(duration=3300){
+      stopConfetti();const c=els.confetti,x=c.getContext("2d"),d=Math.min(devicePixelRatio||1,2);c.width=innerWidth*d;c.height=innerHeight*d;x.scale(d,d);
+      const colors=["#ffd65a","#38c58a","#43b8ee","#ff6b81","#fff","#8c6de9"];
+      const p=Array.from({length:150},()=>({x:Math.random()*innerWidth,y:-20-Math.random()*innerHeight*.7,w:6+Math.random()*8,h:9+Math.random()*10,c:colors[Math.floor(Math.random()*colors.length)],s:2.7+Math.random()*4.2,d:-1.8+Math.random()*3.6,r:Math.random()*Math.PI,q:-.12+Math.random()*.24}));
+      const start=performance.now();function frame(now){x.clearRect(0,0,innerWidth,innerHeight);p.forEach(a=>{a.y+=a.s;a.x+=a.d+Math.sin(a.y*.018)*.5;a.r+=a.q;if(a.y>innerHeight+25)a.y=-25;x.save();x.translate(a.x,a.y);x.rotate(a.r);x.fillStyle=a.c;x.fillRect(-a.w/2,-a.h/2,a.w,a.h);x.restore()});if(now-start<duration)confettiAnimation=requestAnimationFrame(frame);else stopConfetti()}confettiAnimation=requestAnimationFrame(frame);
+    }
+    function stopConfetti(){if(confettiAnimation)cancelAnimationFrame(confettiAnimation);confettiAnimation=null;const x=els.confetti.getContext("2d");x.clearRect(0,0,els.confetti.width,els.confetti.height)}
+
+    els.modalButton.addEventListener("click",handleModal);els.reset.addEventListener("click",resetGame);els.playAgain.addEventListener("click",resetGame);
+    document.addEventListener("keydown",e=>{if(!gameActive||answerLocked||e.target.tagName==="BUTTON")return;const n=Number(e.key);if(n>=1&&n<=4){const btn=els.choices.children[n-1];if(btn)choose(btn)}});
+
+    loadProgress();
+    if(stageIndex<stages.length){renderIdleCard();showStartModal()}
+  </script>
+</body>
+</html>
