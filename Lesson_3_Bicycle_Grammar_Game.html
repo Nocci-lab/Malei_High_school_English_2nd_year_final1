@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#073b5c">
+  <title>Lesson 3 Grammar Cycle</title>
+  <style>
+    :root{--navy:#073b5c;--blue:#0b6f92;--cyan:#66d7e8;--ice:#eefaff;--paper:#fff;--ink:#142b3a;--muted:#526875;--gold:#ffc857;--ok:#087f5b;--bad:#a63d40;--line:#c8e5ee;--shadow:0 16px 45px rgba(7,59,92,.14)}
+    *{box-sizing:border-box}
+    html{scroll-behavior:auto}
+    body{margin:0;background:linear-gradient(160deg,#dff7fc 0,#f8fcfd 38%,#e9f6fb 100%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;font-size:17px;line-height:1.75;min-height:100vh}
+    button,input{font:inherit}
+    button{touch-action:manipulation}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(7,59,92,.96);color:white;box-shadow:0 5px 18px rgba(7,59,92,.25)}
+    .top-inner{max-width:1040px;margin:auto;padding:.7rem 1rem;display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:center}
+    .brand{font-weight:850;letter-spacing:.02em;line-height:1.25}.brand small{display:block;font-weight:600;color:#c9f3fa;font-size:.78rem}
+    .meter{display:flex;gap:.55rem;align-items:center;font-size:.86rem;font-weight:750}.track{width:min(33vw,230px);height:12px;border-radius:999px;background:#315f76;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#fff08a);transition:width .35s}
+    main{max-width:1040px;margin:0 auto;padding:1.25rem 1rem 4rem}
+    .route{display:grid;grid-template-columns:repeat(5,1fr);gap:.45rem;margin-bottom:1rem}
+    .route-step{border:2px solid var(--line);background:white;color:var(--muted);border-radius:14px;padding:.6rem .3rem;text-align:center;font-weight:800;font-size:.78rem;line-height:1.25}
+    .route-step.active{background:var(--navy);border-color:var(--navy);color:white}.route-step.done{background:#dff7ed;border-color:#5bbfa0;color:#075e44}
+    .card{background:var(--paper);border:1px solid rgba(7,59,92,.12);border-radius:24px;box-shadow:var(--shadow);padding:clamp(1.1rem,3vw,2rem)}
+    .eyebrow{color:var(--blue);font-size:.82rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    h1,h2,h3{line-height:1.35;margin:.25em 0 .65em;color:var(--navy)}h1{font-size:clamp(1.55rem,5vw,2.55rem)}h2{font-size:clamp(1.35rem,4vw,2rem)}
+    .lead{color:var(--muted);max-width:52rem}.rule{border-left:5px solid var(--gold);background:#fff9df;padding:.75rem 1rem;border-radius:0 12px 12px 0;margin:1rem 0;font-weight:700}
+    .reading-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.grammar-block{border:2px solid var(--line);border-radius:18px;padding:1rem;background:#fbfeff}.grammar-block h3{margin-top:0}
+    .sentence{padding:.85rem 0;border-top:1px dashed var(--line)}.sentence:first-of-type{border-top:0}.jp{margin:0;color:#374f5c}.en{margin:.2rem 0 0;font-size:1.03rem}.target{font-weight:900;color:#075f7a;background:#d8f6fb;padding:0 .18em;border-radius:4px}.speak{margin-top:.55rem;border:0;border-radius:999px;background:var(--navy);color:#fff;padding:.4rem .85rem;font-weight:800;cursor:pointer}.speak:hover{background:var(--blue)}
+    .actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.25rem}.primary,.secondary,.report{border:0;border-radius:13px;padding:.78rem 1.25rem;font-weight:900;cursor:pointer}.primary{background:var(--navy);color:#fff;box-shadow:0 5px 0 #03283e}.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #03283e}.secondary{background:#e1f5fa;color:var(--navy)}.primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .quiz-head{display:flex;justify-content:space-between;gap:1rem;align-items:start}.pill{white-space:nowrap;background:#e5f8fc;color:#075f7a;border-radius:999px;padding:.25rem .75rem;font-weight:850;font-size:.84rem}
+    .prompt{background:#f5fbfd;border-radius:18px;padding:1rem;margin:1rem 0}.prompt .jp{font-size:1.05rem}.line{margin:.5rem 0}.blank{display:inline-block;vertical-align:middle;width:7.4em;min-width:5.3em;margin:.18rem .13rem;padding:.48rem .55rem;border:2px solid #87c6d6;border-radius:9px;background:#fff;color:var(--ink);text-align:center}.blank:focus{outline:4px solid rgba(255,200,87,.45);border-color:#d89200}.blank.wide{width:10em}
+    .hint{color:var(--muted);font-size:.92rem}.feedback{margin-top:1.1rem;border-radius:16px;padding:1rem;display:none}.feedback.show{display:block}.feedback.correct{background:#e4f8f0;border:2px solid #7ac8ae}.feedback.wrong{background:#fff0ef;border:2px solid #d78b8d}.feedback h3{margin:0 0 .35rem;color:inherit}.answer{font-weight:900}.explain{margin:.35rem 0 0}
+    .section-finish{text-align:center;padding:1rem}.section-finish .wheel{font-size:3.8rem;display:block;animation:roll .8s ease-out}@keyframes roll{from{transform:rotate(-160deg) scale(.7)}to{transform:rotate(0) scale(1)}}
+    .finish{text-align:center}.finish-icon{font-size:4rem}.summary{max-width:560px;margin:1rem auto;text-align:left;background:#edf9fc;border-radius:16px;padding:1rem}.name-row{display:grid;grid-template-columns:auto 1fr;gap:.7rem;align-items:center;max-width:520px;margin:1rem auto}.name-row input{width:100%;padding:.7rem;border:2px solid var(--line);border-radius:10px}.report{background:var(--gold);color:#3a2a00;box-shadow:0 5px 0 #c78e12}.report:active{transform:translateY(3px);box-shadow:0 2px 0 #c78e12}
+    .tiny{color:var(--muted);font-size:.8rem;margin-top:.7rem}.hidden{display:none!important}
+    @media(max-width:740px){body{font-size:16px}.reading-grid{grid-template-columns:1fr}.route{grid-template-columns:repeat(5,minmax(54px,1fr));overflow-x:auto}.route-step{font-size:.69rem}.top-inner{grid-template-columns:1fr}.meter{justify-content:space-between}.track{width:44vw}.blank{width:6.25em}.card{border-radius:18px}.name-row{grid-template-columns:1fr}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-inner">
+      <div class="brand">Lesson 3 Grammar Cycle<small>The World's Most Bicycle-friendly City</small></div>
+      <div class="meter"><span id="progressText">0 / 18 習得</span><div class="track" aria-label="進み具合"><div class="fill" id="progressFill"></div></div></div>
+    </div>
+  </header>
+  <main>
+    <nav class="route" aria-label="学習セクション">
+      <div class="route-step active" data-step="0">1<br>G1・G2 音読</div>
+      <div class="route-step" data-step="1">2<br>G1 問題</div>
+      <div class="route-step" data-step="2">3<br>G2 問題</div>
+      <div class="route-step" data-step="3">4<br>Exercise 1</div>
+      <div class="route-step" data-step="4">5<br>Exercise 2</div>
+    </nav>
+
+    <section class="card" id="readingScreen">
+      <div class="eyebrow">Read aloud</div>
+      <h1>まずG1・G2を音読しよう</h1>
+      <p class="lead">日本語と英文を比べ、青く太字になっている文法表現に注目しましょう。🔊を押すと英文を読み上げます。</p>
+      <div class="reading-grid" id="readingGrid"></div>
+      <div class="actions"><button class="primary" id="startQuiz">音読できた → G1問題へ</button></div>
+    </section>
+
+    <section class="card hidden" id="quizScreen" aria-live="polite">
+      <div class="quiz-head"><div><div class="eyebrow" id="sectionLabel"></div><h2 id="quizTitle"></h2></div><span class="pill" id="questionCount"></span></div>
+      <p class="hint">空欄1つに1語ずつ入力します。大文字・小文字は区別しません。</p>
+      <div class="prompt" id="prompt"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="actions"><button class="primary" id="checkBtn">答えをチェック</button><button class="primary hidden" id="nextBtn">次へ</button></div>
+    </section>
+
+    <section class="card hidden" id="sectionDoneScreen">
+      <div class="section-finish"><span class="wheel">🚲</span><div class="eyebrow">Section clear</div><h2 id="sectionDoneTitle"></h2><p id="sectionDoneText"></p><button class="primary" id="continueBtn">次のセクションへ</button></div>
+    </section>
+
+    <section class="card hidden finish" id="finishScreen">
+      <div class="finish-icon">🏁🚲✨</div><div class="eyebrow">All mastered</div><h1>Lesson 3 Grammar 完全クリア！</h1>
+      <p>5つのセクションを最後まで終え、間違えた問題もすべて正解できました。</p>
+      <div class="summary" id="summary"></div>
+      <div class="name-row"><label for="studentName"><strong>名前</strong></label><input id="studentName" autocomplete="name" placeholder="報告メールに入れる名前"></div>
+      <button class="report" id="reportBtn">✉️ 終わったら報告する</button>
+      <p class="tiny">メール作成画面が開きます。内容を確認して「送信」を押してください。</p>
+    </section>
+  </main>
+
+  <script>
+  'use strict';
+  const readings = [
+    {title:'G1 助動詞 + have + 過去分詞',rule:'過去についての推量・非難・後悔',items:[
+      ['英語の教科書が見つからない。家に<b>置いてきてしまったかもしれない</b>。',"I can't find my English textbook. I <b>may have left</b> it at home."],
+      ['テッドはまだ現れていない。私たちの約束を<b>忘れたにちがいない</b>。','Ted hasn\'t shown up yet. He <b>must have forgotten</b> our appointment.'],
+      ['スーザンが<b>うそをついたはずがない</b>。彼女は正直な人だ。','Susan <b>cannot have told</b> a lie. She is an honest person.'],
+      ['ますます多くの運転手が「車を家に<b>置いてくるべきだったのに</b>」と言うのも不思議ではない。','No wonder more and more motorists are saying, “I <b>should have left</b> the car at home!”']
+    ]},
+    {title:'G2 助動詞に関連する表現',rule:'まとまりごと覚える4つの表現',items:[
+      ['運動不足なら、運動を<b>始めたほうがよい</b>。','If you are out of shape, you <b>had better start</b> exercising.'],
+      ['確かに、<b>もっと速く走りたい</b>自転車利用者もいる。','It\'s true that some cyclists <b>would rather go</b> faster.'],
+      ['コペンハーゲンの都市計画者たちは、<b>以前は</b>ほかの交通手段よりも自動車を好んでいた。','Copenhagen\'s urban planners once <b>used to favor</b> cars over other forms of transportation.'],
+      ['ほかの多くの都市も「コペンハーゲン化」するのは<b>もっともだ</b>。','Many other cities <b>may well “Copenhagenize.”</b>']
+    ]}
+  ];
+
+  const sections = [
+    {id:'g1',label:'G1 問題',title:'助動詞 + have + 過去分詞',questions:[
+      {jp:'英語の教科書が見つからない。家に置いてきてしまったかもしれない。',parts:["I can't find my English textbook. I "," it at home."],answers:[['may','have','left']],ex:'may have + 過去分詞で「～したかもしれない」。left は leave の過去分詞です。'},
+      {jp:'テッドはまだ現れていない。私たちの約束を忘れたにちがいない。',parts:["Ted hasn't shown up yet. He ",' our appointment.'],answers:[['must','have','forgotten']],ex:'must have + 過去分詞で「～したにちがいない」。'},
+      {jp:'スーザンがうそをついたはずがない。彼女は正直な人だ。',parts:['Susan ',' a lie. She is an honest person.'],answers:[['cannot','have','told']],ex:'cannot have + 過去分詞で「～したはずがない」。'},
+      {jp:'ますます多くの運転手が「車を家に置いてくるべきだったのに」と言うのも不思議ではない。',parts:['No wonder more and more motorists are saying, “I ',' the car at home!”'],answers:[['should','have','left']],ex:'should have + 過去分詞で「～すべきだったのに（実際はしなかった）」。'}
+    ]},
+    {id:'g2',label:'G2 問題',title:'助動詞に関連する表現',questions:[
+      {jp:'運動不足なら、運動を始めたほうがよい。',parts:['If you are out of shape, you ',' exercising.'],answers:[['had','better','start']],ex:'had better + 動詞の原形で「～したほうがよい」。'},
+      {jp:'確かに、もっと速く走りたい自転車利用者もいる。',parts:["It's true that some cyclists ",' faster.'],answers:[['would','rather','go']],ex:'would rather + 動詞の原形で「むしろ～したい」。'},
+      {jp:'コペンハーゲンの都市計画者たちは、以前はほかの交通手段よりも自動車を好んでいた。',parts:["Copenhagen's urban planners once ",' cars over other forms of transportation.'],answers:[['used','to','favor']],ex:'used to + 動詞の原形で「以前は～だった／よく～した」。'},
+      {jp:'ほかの多くの都市も「コペンハーゲン化」するのはもっともだ。',parts:['Many other cities ',' “Copenhagenize.”'],answers:[['may','well']],ex:'may well + 動詞の原形で「～するのももっともだ」。'}
+    ]},
+    {id:'ex1',label:'Exercise 1',title:'cannot / must / should を使おう',questions:[
+      {jp:'A：冷蔵庫にあったケーキがなくなっている！\nB：ビルがそれを食べたにちがいない。絶対そうだ！',parts:['A: The cake in the fridge is gone!<br>B: Bill ',' it. I\'m sure of it! <span class="hint">[eat]</span>'],answers:[['must','have','eaten']],ex:'強い確信があるので must have eaten（食べたにちがいない）。eaten は eat の過去分詞です。'},
+      {jp:'A：ベティがまだ来ていない。道に迷ったのかな。\nB：迷ったはずがない。これまで何度もここに来ている。',parts:['A: Betty has not come yet. I wonder if she got lost.<br>B: She ',' lost. She has come here many times so far. <span class="hint">[get]</span>'],answers:[['cannot','have',['gotten','got']]],ex:'「～したはずがない」は cannot have + 過去分詞。gotten と got のどちらも正解です。'},
+      {jp:'私は先週テニスの試合で負けました。\nテスト勉強で忙しかったため、十分に練習できませんでした。\n私はもっと練習すべきでした。',parts:['I ',' a tennis match last week.<br>I ',' because I ',' the exam.<br>I ','.'],answers:[['lost'],[["couldn't",'couldnt'],'practice','enough'],['was','busy','studying','for'],['should','have','practiced','more']],ex:'過去の後悔は should have practiced。「実際には十分練習しなかった」という意味を含みます。'}
+    ]},
+    {id:'ex2',label:'Exercise 2',title:'助動詞に関連する表現を使おう',questions:[
+      {jp:'A：ローラはジェイクに腹を立てているようだね。\nB：彼女が彼に腹を立てるのももっともだ。彼はいつも吹奏楽の練習をさぼっている。',parts:['A: Laura looks mad at Jake.<br>B: She ',' at him. He is always skipping brass band practice.'],answers:[['may','well','be','mad']],ex:'may well be mad で「怒るのももっともだ」。may well の後は動詞の原形 be です。'},
+      {jp:'A：スー、新しいイタリア料理店へ行こう。\nB：また今度にしようかな。私はむしろ家で夕食を食べたい。',parts:["A: Sue, let's go to the new Italian restaurant downtown.<br>B: Maybe another time. I ",' dinner at home.'],answers:[['would','rather','eat']],ex:'would rather eat で「むしろ食べたい」。rather の後は動詞の原形です。'},
+      {jp:'私は小学生のころ、ファンタジー小説をたくさん読んだものですが、今ではミステリー小説をたくさん読みます。',parts:['I ',' a lot of fantasy novels when I was in elementary school, but now I ',' a lot of mystery novels.'],answers:[['used','to','read'],['read']],ex:'used to read は過去の習慣、now I read は現在の習慣を表します。'}
+    ]}
+  ];
+
+  const $=s=>document.querySelector(s);
+  const screens=['#readingScreen','#quizScreen','#sectionDoneScreen','#finishScreen'];
+  let sectionIndex=0, queue=[], current=null, originalTotal=0, mastered=0, attempts=0, mistakes=0;
+  const totalQuestions=sections.reduce((n,s)=>n+s.questions.length,0);
+
+  function normalize(v){return v.trim().toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g,' ')}
+  function readingMarkup(){
+    $('#readingGrid').innerHTML=readings.map(g=>`<article class="grammar-block"><h3>${g.title}</h3><div class="rule">${g.rule}</div>${g.items.map((x,i)=>{const plain=x[1].replace(/<\/?b>/g,'');const jp=x[0].replace(/<b>/g,'<span class="target">').replace(/<\/b>/g,'</span>');return `<div class="sentence"><p class="jp">${i+1}. ${jp}</p><p class="en">${x[1].replace(/<b>/g,'<span class="target">').replace(/<\/b>/g,'</span>')}</p><button class="speak" type="button" data-say="${plain.replace(/"/g,'&quot;')}">🔊 英文を聞く</button></div>`}).join('')}</article>`).join('');
+    document.querySelectorAll('.speak').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say,b)));
+  }
+  function speak(text,button){
+    if(!('speechSynthesis' in window)){alert('このブラウザでは読み上げ機能を利用できません。');return}
+    speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.82;
+    const old=button.textContent;button.textContent='🔊 読み上げ中…';button.disabled=true;
+    u.onend=u.onerror=()=>{button.textContent=old;button.disabled=false};speechSynthesis.speak(u);
+  }
+  function show(sel){screens.forEach(s=>$(s).classList.toggle('hidden',s!==sel));window.scrollTo({top:0,behavior:'auto'})}
+  function setRoute(n,doneThrough=n-1){document.querySelectorAll('.route-step').forEach((el,i)=>{el.classList.toggle('active',i===n);el.classList.toggle('done',i<=doneThrough)})}
+  function updateProgress(){const pct=Math.round(mastered/totalQuestions*100);$('#progressText').textContent=`${mastered} / ${totalQuestions} 習得`;$('#progressFill').style.width=pct+'%'}
+  function startSection(i){sectionIndex=i;const s=sections[i];queue=s.questions.map((q,n)=>({...q,n,missed:false}));originalTotal=s.questions.length;current=null;setRoute(i+1,i);show('#quizScreen');nextQuestion()}
+  function nextQuestion(){
+    if(queue.length===0){sectionComplete();return}
+    current=queue.shift();const s=sections[sectionIndex];$('#sectionLabel').textContent=s.label;$('#quizTitle').textContent=s.title;
+    const baseDone=originalTotal-queue.filter(q=>!q.review).length-1;$('#questionCount').textContent=current.review?'復習問題':`${Math.max(1,baseDone+1)} / ${originalTotal}`;
+    const jp=current.jp.replace(/\n/g,'<br>');let html=`<p class="jp"><strong>${jp}</strong></p><div class="line">`;
+    current.answers.forEach((group,g)=>{html+=current.parts[g];group.forEach((ans,a)=>{const options=Array.isArray(ans)?ans:[ans];const wide=options.some(x=>x.length>8)?' wide':'';html+=`<input class="blank${wide}" aria-label="空欄 ${g+1}-${a+1}" autocomplete="off" autocapitalize="none" spellcheck="false" data-group="${g}" data-word="${a}">`})});
+    html+=current.parts[current.answers.length]+'</div>';$('#prompt').innerHTML=html;
+    $('#feedback').className='feedback';$('#feedback').innerHTML='';$('#checkBtn').classList.remove('hidden');$('#nextBtn').classList.add('hidden');
+    const first=$('.blank');if(first)first.focus({preventScroll:true});
+  }
+  function checkAnswer(){
+    const inputs=[...document.querySelectorAll('.blank')];attempts++;
+    const correct=inputs.every(inp=>{const ans=current.answers[+inp.dataset.group][+inp.dataset.word];const accepted=(Array.isArray(ans)?ans:[ans]).map(normalize);return accepted.includes(normalize(inp.value))});
+    inputs.forEach(inp=>{inp.disabled=true;inp.style.borderColor=correct?'#087f5b':'#a63d40'});
+    const answerText=current.answers.map(g=>g.map(a=>Array.isArray(a)?a.join(' / '):a).join(' ')).join(' ｜ ');
+    const f=$('#feedback');f.className='feedback show '+(correct?'correct':'wrong');
+    if(correct){if(!current.mastered){current.mastered=true;mastered++;updateProgress()}f.innerHTML=`<h3>正解！</h3><div class="answer">${answerText}</div><p class="explain">${current.ex}</p>`}
+    else{mistakes++;current.review=true;queue.push(current);f.innerHTML=`<h3>もう一度、あとで挑戦しよう</h3><div>正解：<span class="answer">${answerText}</span></div><p class="explain">${current.ex}</p><p class="hint">この問題は、このセクションの最後にもう一度出ます。</p>`}
+    $('#checkBtn').classList.add('hidden');$('#nextBtn').classList.remove('hidden');$('#nextBtn').focus({preventScroll:true});
+  }
+  function sectionComplete(){const s=sections[sectionIndex];$('#sectionDoneTitle').textContent=s.label+' クリア！';$('#sectionDoneText').textContent='間違えた問題も含め、すべて正解できました。';show('#sectionDoneScreen');setRoute(sectionIndex+1,sectionIndex+1);$('#continueBtn').textContent=sectionIndex===sections.length-1?'結果を見る':'次のセクションへ'}
+  function finish(){setRoute(-1,5);show('#finishScreen');const accuracy=Math.round(totalQuestions/attempts*100);$('#summary').innerHTML=`<strong>学習結果</strong><br>習得した問題：${totalQuestions}問<br>答えをチェックした回数：${attempts}回<br>チェック全体の正答率：${accuracy}%<br>復習になった回数：${mistakes}回`}
+  function report(){const name=$('#studentName').value.trim()||'（名前を入力してください）';const subject='Lesson 3 Grammar 完了報告';const body=`${name}です。\n\nLesson 3 “The World's Most Bicycle-friendly City” のGrammarゲームを最後まで終えました。\n\n完了セクション\n・G1・G2 音読\n・G1 問題\n・G2 問題\n・Exercise 1\n・Exercise 2\n\n全${totalQuestions}問を正解するまで復習しました。\nチェック回数：${attempts}回\n復習回数：${mistakes}回`;
+    location.href=`mailto:1216ssence@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}
+  readingMarkup();updateProgress();
+  $('#startQuiz').addEventListener('click',()=>startSection(0));$('#checkBtn').addEventListener('click',checkAnswer);$('#nextBtn').addEventListener('click',nextQuestion);
+  $('#continueBtn').addEventListener('click',()=>sectionIndex===sections.length-1?finish():startSection(sectionIndex+1));$('#reportBtn').addEventListener('click',report);
+  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#quizScreen').classList.contains('hidden')){e.preventDefault();if(!$('#checkBtn').classList.contains('hidden'))checkAnswer();else nextQuestion()}});
+  </script>
+</body>
+</html>
